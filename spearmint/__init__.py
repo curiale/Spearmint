@@ -77,12 +77,14 @@ def create_experiment(username, name, parameters, outcome):
     db = get_db()
     profile = {'parameters': parameters, 'outcome': outcome}
     db[username][name]['profile'].insert_one(profile)
+    return True
 
 def delete_experiment(username, name):
     db = get_db()
     db[username][name]['profile'].drop()
     db[username][name]['jobs'].drop()
     db[username][name]['hypers'].drop()
+    return True
 
 def get_suggestion(username, name):
     experiment = get_experiment(username, name)
