@@ -17,6 +17,7 @@ from spearmint.utils.database.mongodb import MongoDB
 from spearmint.tasks.task_group import TaskGroup
 
 DB_ADDRESS = 'localhost'
+#DB_ADDRESS = '52.11.105.185:27017' # Example remote host_ip:port
 
 def get_db():
     return pymongo.MongoClient(DB_ADDRESS)['spearmint']
@@ -89,13 +90,11 @@ def delete_experiment(username, name):
 def get_suggestion(username, name):
     experiment = get_experiment(username, name)
     params = experiment.suggest()
-    experiment.save_current_job_id() # save for update
     return params
 
-def post_update(username, name, outcome_val):
+def post_update(username, name, param_values, outcome_val):
     experiment = get_experiment(username, name)
-    experiment.load_current_job_id() # retrieve saved job id
-    experiment.update(outcome_val)
+    experiment.update(param_values, outcome_val)
 
 class Experiment:
     def __init__(self,
@@ -122,9 +121,6 @@ class Experiment:
         chooser_module = importlib.import_module('spearmint.choosers.' + chooser_name)
         self.chooser = chooser_module.init({})
 
-    def get_job_id(self):
-        return self.job_id
-
     def load_jobs(self):
         jobs = self.db.load(self.name, 'jobs')
 
@@ -135,19 +131,9 @@ class Experiment:
 
         return jobs
 
-    def save_current_job_id(self):
-        profile = self.db.db[self.name]['profile'].find_one()
-        profile['job_id'] = self.job_id # save for update
-        self.db.db[self.name]['profile'].save(profile)
-
-    def load_current_job_id(self):
-        profile = self.db.db[self.name]['profile'].find_one()
-        self.job_id = profile['job_id']
-
     def simplify_params(self, params):
         # just extract first value of each parameter name
         params_simple = {}
-        #params_simple = {name: params[name]['values'][0] for name in params}
         for name in params:
             ptype = self.parameters[name]['type']
             if ptype == 'int':
@@ -205,19 +191,20 @@ class Experiment:
             'end time'  : None
         }
         self.db.save(job, self.name, 'jobs', {'id' : job_id})
-        self.job_id = job_id # save for update method
 
         # just extract first value of each parameter name
         params_simple = self.simplify_params(params)
+        params_simple['__id__'] = job_id
         return params_simple
 
-    def update(self, outcome_val):
+    def update(self, param_values, outcome_val):
         #print 'updating...'
 
         if not self.outcome['minimize']:
             outcome_val = -outcome_val # negate to maximize (default behavior of spearmint: minimize)
 
-        job = self.db.load(self.name, 'jobs', {'id' : self.job_id})
+        job_id = param_values['__id__']
+        job = self.db.load(self.name, 'jobs', {'id' : job_id})
 
         end_time = time.time()
 
@@ -225,4 +212,4 @@ class Experiment:
         job['status']   = 'complete'
         job['end time'] = end_time
 
-        self.db.save(job, self.name, 'jobs', {'id' : self.job_id})
+        self.db.save(job, self.name, 'jobs', {'id' : job_id})
