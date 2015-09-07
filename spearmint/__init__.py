@@ -76,7 +76,7 @@ def find_jobs(username, name):
 
 def create_experiment(username, name, parameters, outcome):
     db = get_db()
-    profile = {'parameters': parameters, 'outcome': outcome}
+    profile = {'parameters': parameters, 'outcome': outcome, 'next_id': 0}
     db[username][name]['profile'].insert_one(profile)
     return True
 
@@ -131,6 +131,13 @@ class Experiment:
 
         return jobs
 
+    def get_next_job_id(self):
+        profile = self.db.load(self.name, 'profile')
+        next_id = profile['next_id']
+        profile['next_id'] = next_id + 1
+        self.db.save(profile, self.name, 'profile')
+        return next_id
+
     def simplify_params(self, params):
         # just extract first value of each parameter name
         params_simple = {}
@@ -181,7 +188,7 @@ class Experiment:
         suggested_input = self.chooser.suggest()
         params = task_group.paramify(suggested_input)
 
-        job_id = len(jobs) + 1
+        job_id = self.get_next_job_id()
         start_time = time.time()
         job = {
             'id'        : job_id,
