@@ -16,8 +16,9 @@ import pymongo
 from spearmint.utils.database.mongodb import MongoDB
 from spearmint.tasks.task_group import TaskGroup
 
-DB_ADDRESS = 'localhost'
-#DB_ADDRESS = '52.11.105.185:27017' # Example remote host_ip:port
+#DB_ADDRESS = 'localhost'
+DB_ADDRESS = 'spmint.chestimagingplatform.org:27017' # Example remote host_ip:port
+
 
 def get_db():
     return pymongo.MongoClient(DB_ADDRESS)['spearmint']
