@@ -16,28 +16,25 @@ import pymongo
 from spearmint.utils.database.mongodb import MongoDB
 from spearmint.tasks.task_group import TaskGroup
 
-#DB_ADDRESS = 'localhost'
-DB_ADDRESS = 'spmint.chestimagingplatform.org:27017' # Example remote host_ip:port
 
+def get_db(db_uri):
+    return pymongo.MongoClient(db_uri)['spearmint']
 
-def get_db():
-    return pymongo.MongoClient(DB_ADDRESS)['spearmint']
-
-def find_experiment(username, name):
-    db = get_db()
+def find_experiment(username, name, db_uri):
+    db = get_db(db_uri)
     profile_name = username + '.' + name + '.profile'
     return profile_name in db.collection_names() # True if experiment exists
 
-def get_experiment(username, name):
-    db = get_db()
+def get_experiment(username, name, db_uri):
+    db = get_db(db_uri)
     profile = db[username][name]['profile'].find_one()
     experiment = Experiment(username + '.' + name,
                             parameters=profile['parameters'],
                             outcome=profile['outcome'])
     return experiment
 
-def find_all_experiments(username):
-    db = get_db()
+def find_all_experiments(username, db_uri):
+    db = get_db(db_uri)
     names = []
     for name in db.collection_names():
         match_obj = re.match(username + '\.(.+)\.profile', name)
@@ -45,8 +42,8 @@ def find_all_experiments(username):
             names.append(match_obj.group(1))
     return names
 
-def find_jobs(username, name):
-    experiment = get_experiment(username, name)
+def find_jobs(username, name, db_uri):
+    experiment = get_experiment(username, name, db_uri)
     jobs = experiment.load_jobs()
 
     # a little bit of processing to interpret numpy values
@@ -75,26 +72,26 @@ def find_jobs(username, name):
         simple_jobs.insert(0, best_job)
     return simple_jobs
 
-def create_experiment(username, name, parameters, outcome):
-    db = get_db()
+def create_experiment(username, name, parameters, outcome, db_uri):
+    db = get_db(db_uri)
     profile = {'parameters': parameters, 'outcome': outcome, 'next_id': 0}
     db[username][name]['profile'].insert_one(profile)
     return True
 
-def delete_experiment(username, name):
-    db = get_db()
+def delete_experiment(username, name, db_uri):
+    db = get_db(db_uri)
     db[username][name]['profile'].drop()
     db[username][name]['jobs'].drop()
     db[username][name]['hypers'].drop()
     return True
 
-def get_suggestion(username, name):
-    experiment = get_experiment(username, name)
+def get_suggestion(username, name, db_uri):
+    experiment = get_experiment(username, name, db_uri)
     params = experiment.suggest()
     return params
 
-def post_update(username, name, param_values, outcome_val):
-    experiment = get_experiment(username, name)
+def post_update(username, name, param_values, outcome_val, db_uri):
+    experiment = get_experiment(username, name, db_uri)
     experiment.update(param_values, outcome_val)
 
 class Experiment:
@@ -104,6 +101,7 @@ class Experiment:
                  parameters=None,
                  outcome=None,
                  access_token=None,
+                 db_uri='mongodb://spmint.chestimagingplatform.org/spearmint',
                  likelihood='GAUSSIAN'): # other option is NOISELESS
         for pval in parameters.itervalues():
             pval['size'] = 1 # add default size = 1
@@ -112,10 +110,11 @@ class Experiment:
         self.parameters = parameters
         self.name = name
         self.outcome = outcome
+        self.db_uri=db_uri
         if not 'minimize' in outcome:
             self.outcome['minimize'] = False
-        print 'Using database at {0}.'.format(DB_ADDRESS)
-        self.db = MongoDB(database_address=DB_ADDRESS)
+        #print 'Using database at {0}.'.format(DB_ADDRESS)
+        self.db = MongoDB(self.db_uri)
         self.tasks = {'main' : {'type' : 'OBJECTIVE', 'likelihood' : likelihood}}
         # Load up the chooser.
         chooser_name = 'default_chooser'
