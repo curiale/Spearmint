@@ -30,6 +30,7 @@ def get_experiment(username, name, db_uri):
     profile = db[username][name]['profile'].find_one()
     experiment = Experiment(username + '.' + name,
                             parameters=profile['parameters'],
+                            db_uri=db_uri,
                             outcome=profile['outcome'])
     return experiment
 
@@ -101,7 +102,8 @@ class Experiment:
                  parameters=None,
                  outcome=None,
                  access_token=None,
-                 db_uri='mongodb://spmint.chestimagingplatform.org/spearmint',
+                 #db_uri='mongodb://spmint.chestimagingplatform.org/spearmint',
+                 db_uri='',
                  likelihood='GAUSSIAN'): # other option is NOISELESS
         for pval in parameters.itervalues():
             pval['size'] = 1 # add default size = 1
@@ -110,7 +112,7 @@ class Experiment:
         self.parameters = parameters
         self.name = name
         self.outcome = outcome
-        self.db_uri=db_uri
+        self.db_uri = db_uri
         if not 'minimize' in outcome:
             self.outcome['minimize'] = False
         #print 'Using database at {0}.'.format(DB_ADDRESS)
