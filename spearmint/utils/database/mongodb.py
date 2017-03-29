@@ -254,3 +254,19 @@ class MongoDB(AbstractDB):
     def remove(self, experiment_name, experiment_field, field_filters={}):
         self.db[experiment_name][experiment_field].remove(field_filters)
 
+
+    def atomic_incrvariable(self, experiment_name, experiment_field, incr_variable_name):
+        id_val=self.load(experiment_name,experiment_field)['_id']
+        self.db[experiment_name][experiment_field].update_one(
+            {
+                '_id': id_val
+            }, {
+                '$inc': {
+                    incr_variable_name: 1
+                }
+            }, upsert=False)
+
+        object = self.load(experiment_name, experiment_field)
+        return object[incr_variable_name]
+
+

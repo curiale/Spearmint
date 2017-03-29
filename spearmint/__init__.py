@@ -95,6 +95,11 @@ def post_update(username, name, param_values, outcome_val, db_uri):
     experiment = get_experiment(username, name, db_uri)
     experiment.update(param_values, outcome_val)
 
+def get_next_job_id(username, name, db_uri):
+    experiment = get_experiment(username, name, db_uri)
+    job_id=experiment.get_next_job_id()
+    return job_id
+
 class Experiment:
     def __init__(self,
                  name,
@@ -134,10 +139,11 @@ class Experiment:
         return jobs
 
     def get_next_job_id(self):
-        profile = self.db.load(self.name, 'profile')
-        next_id = profile['next_id']
-        profile['next_id'] = next_id + 1
-        self.db.save(profile, self.name, 'profile')
+        # profile = self.db.load(self.name, 'profile')
+        # next_id = profile['next_id']
+        # profile['next_id'] = next_id + 1
+        # self.db.save(profile, self.name, 'profile')
+        next_id=self.db.atomic_incrvariable(self.name,'profile','next_id')
         return next_id
 
     def simplify_params(self, params):
@@ -171,6 +177,12 @@ class Experiment:
         return task_group
 
     def suggest(self):
+        params=self.get_params()
+        job_id = self.get_next_job_id()
+        params_simple=self.create_job(job_id,params)
+        return params_simple
+
+    def get_params(self):
         #print 'thinking...'
         jobs = self.load_jobs()
 
@@ -190,16 +202,19 @@ class Experiment:
         suggested_input = self.chooser.suggest()
         params = task_group.paramify(suggested_input)
 
-        job_id = self.get_next_job_id()
+        return params
+
+    def create_job(self,job_id,params):
+
         start_time = time.time()
         job = {
-            'id'        : job_id,
-            'params'    : params,
-            'status'    : 'pending',
+            'id': job_id,
+            'params': params,
+            'status': 'pending',
             'start time': start_time,
-            'end time'  : None
+            'end time': None
         }
-        self.db.save(job, self.name, 'jobs', {'id' : job_id})
+        self.db.save(job, self.name, 'jobs', {'id': job_id})
 
         # just extract first value of each parameter name
         params_simple = self.simplify_params(params)
