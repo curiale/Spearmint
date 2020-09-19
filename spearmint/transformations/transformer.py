@@ -270,11 +270,11 @@ class Transformer(object):
     def backward_pass(self, V):
         assert self.layer_transformations, 'Transformer should contain transformations.'
 
-        for transformations, t_inds, remaining_inds, output_num_dims in zip(
+        for transformations, t_inds, remaining_inds, output_num_dims in list(zip(
                 self.layer_transformations,
                 self.layer_inds,
                 self.layer_remaining_inds,
-                self.layer_output_dims)[::-1]:
+                self.layer_output_dims))[::-1]:
 
             JV = np.zeros(list(V.shape[:-1])+[len([i for inds in t_inds for i in inds]) + len(remaining_inds)])
             i = 0

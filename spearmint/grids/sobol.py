@@ -240,7 +240,7 @@ def to_binary(X, bits):
 
 # These are the parameters for the Sobol sequence.
 # This is hilarious.
-params = """(lp1
+params = b"""(lp1
 (dp2
 S'a'
 I0
