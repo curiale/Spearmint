@@ -305,8 +305,8 @@ def test_backward_pass():
     dloss = t.backward_pass(V)
     
     dloss_est = np.zeros(dloss.shape)
-    for i in xrange(N):
-        for j in xrange(D):
+    for i in range(N):
+        for j in range(D):
             data[i,j] += eps
             loss_1 = np.sum(t.forward_pass(data)**2)
             data[i,j] -= 2*eps
@@ -326,8 +326,8 @@ def test_backward_pass():
     dloss = t.backward_pass(V)
     
     dloss_est = np.zeros(dloss.shape)
-    for i in xrange(N):
-        for j in xrange(D):
+    for i in range(N):
+        for j in range(D):
             data[i,j] += eps
             loss_1 = np.sum(t.forward_pass(data)**2)
             data[i,j] -= 2*eps
@@ -405,5 +405,5 @@ def test_add_layer():
 
     output_inds = t.add_layer(st3)
     assert len(t.layer_transformations) == 2
-    assert output_inds == range(10)
+    assert output_inds == list(range(10))
 

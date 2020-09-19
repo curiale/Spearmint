@@ -185,9 +185,7 @@
 
 from abc import ABCMeta, abstractmethod
 
-class AbstractScheduler(object):
-    __metaclass__ = ABCMeta
-
+class AbstractScheduler(object, metaclass=ABCMeta):
     def __init__(self, options):
         self.options = options
         

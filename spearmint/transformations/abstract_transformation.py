@@ -186,9 +186,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class AbstractTransformation(object):
-    __metaclass__ = ABCMeta
-
+class AbstractTransformation(object, metaclass=ABCMeta):
     @property
     def hypers(self):
         return None

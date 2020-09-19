@@ -194,9 +194,7 @@ from abc import ABCMeta, abstractmethod
 def init(*args, **kwargs):
     return AbstractClusterScheduler(*args, **kwargs)
 
-class AbstractClusterScheduler(object):
-    __metaclass__ = ABCMeta
-    
+class AbstractClusterScheduler(object, metaclass=ABCMeta):
     def __init__(self, options):
         self.options = options
     

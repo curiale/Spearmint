@@ -210,8 +210,8 @@ def create_task():
 
     # Create a set of inputs that satisfies the constraints of each variable
     X = np.zeros((10,num_dims))
-    for i in xrange(10):
-        for name, variable in variables_meta.iteritems():
+    for i in range(10):
+        for name, variable in variables_meta.items():
             indices = variable['indices']
             if variable['type'] == 'int':
                 X[i,indices] = np.random.randint(variable['min'], variable['max']+1, len(indices))

@@ -209,9 +209,9 @@ class Transformer(object):
         if len(layer_transformations) == 1 and isinstance(layer_transformations[0], AbstractTransformation):
             assert layer_transformations[0].num_dims == num_input_dims, 'Transformation must have the same number of input dimensions as the transformer layer.'
             transformations = layer_transformations
-            t_inds = [range(num_input_dims)]
+            t_inds = [list(range(num_input_dims))]
         else:
-            transformations, t_inds = zip(*layer_transformations)
+            transformations, t_inds = list(zip(*layer_transformations))
 
         self.validate_layer(t_inds)
         
@@ -243,8 +243,8 @@ class Transformer(object):
             for i in inds:
                 counts[i] += 1
 
-        assert np.array(counts.keys()).max() < self.num_dims, 'Maximum index exceeds number of dimensions.'
-        assert all([count == 1 for count in counts.values()]), 'Each index may only be used once.'
+        assert np.array(list(counts.keys())).max() < self.num_dims, 'Maximum index exceeds number of dimensions.'
+        assert all([count == 1 for count in list(counts.values())]), 'Each index may only be used once.'
 
     def forward_pass(self, inputs):
         assert self.layer_transformations, 'Transformer should contain transformations.'

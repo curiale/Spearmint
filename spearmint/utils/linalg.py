@@ -245,7 +245,7 @@ def fast_chol_add(L, A):
                                compiler='gcc')
     except:
         k = np.arange(cols)
-        for i in xrange(cols):
+        for i in range(cols):
             j = rows-1;
             s = A[i,j] - np.dot(U[k[:i],i].T,U[k[:i],j])
             if i == j:

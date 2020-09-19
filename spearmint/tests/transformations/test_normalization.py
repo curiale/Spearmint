@@ -208,8 +208,8 @@ def test_backward_pass():
     dloss = n.backward_pass(V)
     
     dloss_est = np.zeros(dloss.shape)
-    for i in xrange(N):
-        for j in xrange(D):
+    for i in range(N):
+        for j in range(D):
             data[i,j] += eps
             loss_1 = np.sum(n.forward_pass(data)**2)
             data[i,j] -= 2*eps

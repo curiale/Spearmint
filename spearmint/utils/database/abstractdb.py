@@ -185,9 +185,7 @@
 
 from abc import ABCMeta, abstractmethod
 
-class AbstractDB(object):
-    __metaclass__ = ABCMeta
-
+class AbstractDB(object, metaclass=ABCMeta):
     @abstractmethod
     def save(self, collection_name):
         pass

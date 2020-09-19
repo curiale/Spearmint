@@ -201,7 +201,7 @@ def decompress_array(a):
 def compress_nested_container(u_container):
     if isinstance(u_container, dict):
         cdict = {}
-        for key, value in u_container.iteritems():
+        for key, value in u_container.items():
             if isinstance(value, dict) or isinstance(value, list):
                 cdict[key] = compress_nested_container(value)
             else:
@@ -226,14 +226,14 @@ def compress_nested_container(u_container):
 
 def decompress_nested_container(c_container):
     if isinstance(c_container, dict):
-        if c_container.has_key('ctype') and c_container['ctype'] == COMPRESS_TYPE:
+        if 'ctype' in c_container and c_container['ctype'] == COMPRESS_TYPE:
             try:
                 return decompress_array(c_container)
             except:
                 raise Exception('Container does not contain a valid array.')
         else:
             udict = {}
-            for key, value in c_container.iteritems():
+            for key, value in c_container.items():
                 if isinstance(value, dict) or isinstance(value, list):
                     udict[key] = decompress_nested_container(value)
                 else:

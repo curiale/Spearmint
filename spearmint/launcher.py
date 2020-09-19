@@ -257,21 +257,21 @@ def launch(db_address, experiment_name, job_id):
                 # Apparently this dict generator throws an error for some people??
                 # result = {task_name: np.nan for task_name in job['tasks']}
                 # So we use the much uglier version below... ????
-                result = dict(zip(job['tasks'], [np.nan]*len(job['tasks'])))
+                result = dict(list(zip(job['tasks'], [np.nan]*len(job['tasks']))))
             elif len(job['tasks']) == 1: # Only one named job
                 result = {job['tasks'][0] : result}
             else:
                 result = {'main' : result}
         
         if set(result.keys()) != set(job['tasks']):
-            raise Exception("Result task names %s did not match job task names %s." % (result.keys(), job['tasks']))
+            raise Exception("Result task names %s did not match job task names %s." % (list(result.keys()), job['tasks']))
 
         success = True
     except:
         import traceback
         traceback.print_exc()
         sys.stderr.write("Problem executing the function\n")
-        print sys.exc_info()
+        print(sys.exc_info())
         
     end_time = time.time()
 
@@ -305,7 +305,7 @@ def python_launcher(job):
 
     # Convert the JSON object into useful parameters.
     params = {}
-    for name, param in job['params'].iteritems():
+    for name, param in job['params'].items():
         vals = param['values']
 
         if param['type'].lower() == 'float':
@@ -351,7 +351,7 @@ def matlab_launcher(job):
     session.run("cd('%s')" % os.path.realpath(job['expt_dir']))
 
     session.run('params = struct()')
-    for name, param in job['params'].iteritems():
+    for name, param in job['params'].items():
         vals = param['values']
 
         # sys.stderr.write('%s = %s\n' % (param['name'], str(vals)))
@@ -400,7 +400,7 @@ def mcr_launcher(job):
     # Change into the directory.
     os.chdir(job['expt_dir'])
 
-    if os.environ.has_key('MATLAB'):
+    if 'MATLAB' in os.environ:
         mcr_loc = os.environ['MATLAB']
     else:
         raise Exception("Please set the MATLAB environment variable")

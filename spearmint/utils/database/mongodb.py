@@ -187,7 +187,7 @@ import time
 import pymongo
 import numpy.random as npr
 
-from abstractdb                  import AbstractDB
+from .abstractdb                  import AbstractDB
 from spearmint.utils.compression import compress_nested_container, decompress_nested_container
 
 class MongoDB(AbstractDB):

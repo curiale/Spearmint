@@ -203,7 +203,7 @@ class TaskGroup(object):
     
     def __init__(self, tasks_config, variables_config):
         self.tasks = {}
-        for task_name, task_options in tasks_config.iteritems():
+        for task_name, task_options in tasks_config.items():
             self.tasks[task_name] = Task(task_name,
                                          task_options,
                                          variables_config)
@@ -229,7 +229,7 @@ class TaskGroup(object):
     @inputs.setter
     def inputs(self, inputs):
         self._inputs = inputs
-        for task in self.tasks.values():
+        for task in list(self.tasks.values()):
             task.inputs = inputs
 
     @property
@@ -239,13 +239,13 @@ class TaskGroup(object):
     @pending.setter
     def pending(self, pending):
         self._pending = pending
-        for task in self.tasks.values():
+        for task in list(self.tasks.values()):
             task.pending = pending
 
     @property
     def values(self):
         """return a dictionary of the task values keyed by task name"""
-        return {task_name : task.values for task_name, task in self.tasks.iteritems()}
+        return {task_name : task.values for task_name, task in self.tasks.items()}
 
     @values.setter
     def values(self, values):
@@ -255,7 +255,7 @@ class TaskGroup(object):
             task.values = values[task_name]
 
     def add_nan_task_if_nans(self):
-        valids = np.vstack([vals for vals in self.values.values()]).sum(0)
+        valids = np.vstack([vals for vals in list(self.values.values())]).sum(0)
 
         if np.any(np.isnan(valids)):
                 

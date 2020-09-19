@@ -207,7 +207,7 @@ class BaseTask(object):
         cardinality    = 0 # The number of distinct variables
         num_dims       = 0 # The number of dimensions in the matrix representation
 
-        for name, variable in variables_config.iteritems():
+        for name, variable in variables_config.items():
             cardinality += variable['size']
             vdict = {'type'    : variable['type'].lower(),
                      'indices' : []} # indices stores a mapping from these variable(s) to their matrix column(s)
@@ -223,7 +223,7 @@ class BaseTask(object):
             else:
                 raise Exception("Unknown variable type.")
 
-            for i in xrange(variable['size']):
+            for i in range(variable['size']):
                 if vdict['type'] == 'int':
                     vdict['indices'].append(num_dims)
                     num_dims += 1
@@ -250,7 +250,7 @@ class BaseTask(object):
         sys.stderr.write(indentation)
         sys.stderr.write('----          ----       -----\n')
 
-        for param_name, param in params.iteritems():
+        for param_name, param in params.items():
 
             if param['type'] == 'float':
                 format_str = '%s%-12.12s  %-9.9s  %-12f\n'
@@ -259,7 +259,7 @@ class BaseTask(object):
             else:
                 format_str = '%s%-12.12s  %-9.9s  %-12d\n'
 
-            for i in xrange(len(param['values'])):
+            for i in range(len(param['values'])):
                 if i == 0:
                     sys.stderr.write(format_str % (indentation, param_name, param['type'], param['values'][i]))
                 else:
@@ -271,7 +271,7 @@ class BaseTask(object):
             raise Exception('Input to paramify must be a 1-D array.')
 
         params = {}
-        for name, vdict in self.variables_meta.iteritems():
+        for name, vdict in self.variables_meta.items():
             indices = vdict['indices']
             params[name] = {}
             params[name]['type'] = vdict['type']
@@ -290,7 +290,7 @@ class BaseTask(object):
     # Converts a dict of params to the corresponding vector in puts space
     def vectorify(self, params):
         v = np.zeros(self.num_dims)
-        for name, param in params.iteritems():
+        for name, param in params.items():
             indices = self.variables_meta[name]['indices']
 
             if param['type'] == 'int' or param['type'] == 'float':
@@ -316,7 +316,7 @@ class BaseTask(object):
             squeeze = False
 
         U = np.zeros(V.shape)
-        for name, variable in self.variables_meta.iteritems():
+        for name, variable in self.variables_meta.items():
             indices = variable['indices']
             if variable['type'] == 'int':
                 vals = V[:,indices]
@@ -346,7 +346,7 @@ class BaseTask(object):
             squeeze = False
 
         V = np.zeros(U.shape)
-        for name, variable in self.variables_meta.iteritems():
+        for name, variable in self.variables_meta.items():
             indices = variable['indices']
             if variable['type'] == 'int':
                 vals = U[:,indices]

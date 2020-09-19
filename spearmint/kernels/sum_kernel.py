@@ -184,6 +184,7 @@
 
 
 from .abstract_kernel import AbstractKernel
+from functools import reduce
 
 
 class SumKernel(AbstractKernel):

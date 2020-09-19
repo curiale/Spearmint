@@ -182,7 +182,7 @@
 # to enter into this License and Terms of Use on behalf of itself and
 # its Institution.
 
-from cluster_scheduler import AbstractClusterScheduler
+from .cluster_scheduler import AbstractClusterScheduler
 
 def init(*args, **kwargs):
     return SGEScheduler(*args, **kwargs)

@@ -189,7 +189,7 @@
 import sys
 import numpy as np
 import priors
-import kernel_utils
+from . import kernel_utils
 import scipy.stats as sps
 import warnings
 import scipy.special as spe
@@ -217,7 +217,7 @@ class productCov:
             Ks = list()
             dKs = list()
             cov_grad = np.zeros((x1.shape[0], 1, x2.shape[1]))
-            for i in xrange(len(self.kernels)):
+            for i in range(len(self.kernels)):
                 (K, dK) = self.kernels[i].kernel(x1[:,self.dim_indices[i]],
                                                  x2[:,self.dim_indices[i]],
                                                  grad)
@@ -225,12 +225,12 @@ class productCov:
                 dKs.append(dK)
                 cov = cov * K
 
-            for i in xrange(len(self.kernels)):
+            for i in range(len(self.kernels)):
                 cov_grad[:, :, self.dim_indices[i]] = (cov_grad[:, :, self.dim_indices[i]] +
                                                        dKs[i] * (cov / Ks[i])[:,:,np.newaxis])
             return (cov, cov_grad)
         else:
-            for i in xrange(len(self.kernels)):
+            for i in range(len(self.kernels)):
                 cov = cov * self.kernels[i].kernel(x1[:,self.dim_indices[i]],
                                                    x2[:,self.dim_indices[i]],
                                                    grad)
