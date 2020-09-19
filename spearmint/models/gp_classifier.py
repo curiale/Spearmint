@@ -191,12 +191,6 @@ import scipy.linalg      as spla
 import scipy.optimize    as spo
 import scipy.io          as sio
 import scipy.stats       as sps
-import scipy
-if scipy.__version__ > "0.18.1":
-    import weave as spweave
-else:
-    import scipy.weave as spweave
-
 
 from .gp                                     import GP
 from ..utils.param                           import Param as Hyperparameter

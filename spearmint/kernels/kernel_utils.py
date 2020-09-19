@@ -184,11 +184,12 @@
 
 
 import numpy as np
-import scipy
-if scipy.__version__ > "0.18.1":
-    import weave as spweave
-else:
-    import scipy.weave as spweave
+# weave is not supported in Python 3 scipy
+# import scipy
+# if scipy.__version__ > "0.18.1":
+#     import weave as spweave
+# else:
+#     import scipy.weave as spweave
 from scipy.spatial.distance import cdist
 
 def dist2(ls, x1, x2=None):
@@ -224,21 +225,24 @@ def grad_dist2(ls, x1, x2=None):
     D = x1.shape[1]
     gX = np.zeros((x1.shape[0],x2.shape[0],x1.shape[1]))
 
-    code = \
-    """
-    for (int i=0; i<N; i++)
-      for (int j=0; j<M; j++)
-        for (int d=0; d<D; d++)
-          gX(i,j,d) = (2/ls(d))*(x1(i,d) - x2(j,d));
-    """
-    try:
-        spweave.inline(code, ['x1','x2','gX','ls','M','N','D'], \
-                           type_converters=spweave.converters.blitz, \
-                           compiler='gcc')
-    except:
-    # The C code weave above is 10x faster than this:
-        for i in range(0,x1.shape[0]):
-            gX[i,:,:] = 2*(x1[i,:] - x2[:,:])*(1/ls)
+    # code = \
+    # """
+    # for (int i=0; i<N; i++)
+    #   for (int j=0; j<M; j++)
+    #     for (int d=0; d<D; d++)
+    #       gX(i,j,d) = (2/ls(d))*(x1(i,d) - x2(j,d));
+    # """
+    # try:
+    #     spweave.inline(code, ['x1','x2','gX','ls','M','N','D'], \
+    #                        type_converters=spweave.converters.blitz, \
+    #                        compiler='gcc')
+    # except:
+    # # The C code weave above is 10x faster than this:
+
+    # weave is not supported in Python 3 scipy, so we use the original Python code here which was originally in the
+    # except clause of the above code commented out.
+    for i in range(0,x1.shape[0]):
+        gX[i,:,:] = 2*(x1[i,:] - x2[:,:])*(1/ls)
 
     return gX
 
