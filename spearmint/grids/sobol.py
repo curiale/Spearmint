@@ -236,7 +236,7 @@ def sobol(num_points, num_dims):
     return Z
 
 def to_binary(X, bits):
-    return 1 & (X[:,np.newaxis]/2**np.arange(bits-1,-1,-1, dtype=np.uint32))
+    return 1 & (X[:,np.newaxis] // 2**np.arange(bits-1,-1,-1, dtype=np.uint32))
 
 # These are the parameters for the Sobol sequence.
 # This is hilarious.
