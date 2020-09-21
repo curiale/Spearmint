@@ -316,7 +316,7 @@ def slice_sample(init_x, logprob, *logprob_args, **slice_sample_args):
             new_z     = (upper - lower)*npr.rand() + lower
             new_llh   = dir_logprob(new_z)
             if np.isnan(new_llh):
-                print new_z, direction*new_z + init_x, new_llh, llh_s, init_x, logprob(init_x, *logprob_args)
+                print(new_z, direction*new_z + init_x, new_llh, llh_s, init_x, logprob(init_x, *logprob_args))
                 raise Exception("Slice sampler got a NaN")
             if new_llh > llh_s and acceptable(new_z, llh_s, start_lower, start_upper):
                 break
@@ -328,7 +328,7 @@ def slice_sample(init_x, logprob, *logprob_args, **slice_sample_args):
                 raise Exception("Slice sampler shrank to zero!")
 
         if verbose:
-            print "Steps Out:", l_steps_out, u_steps_out, " Steps In:", steps_in
+            print("Steps Out:", l_steps_out, u_steps_out, " Steps In:", steps_in)
 
         return new_z*direction + init_x, new_llh
 
@@ -340,7 +340,7 @@ def slice_sample(init_x, logprob, *logprob_args, **slice_sample_args):
 
     dims = init_x.shape[0]
     if compwise:
-        ordering = range(dims)
+        ordering = list(range(dims))
         npr.shuffle(ordering)
         new_x = init_x.copy()
         for d in ordering:
@@ -377,7 +377,7 @@ def slice_sample_simple(init_x, logprob, *logprob_args, **slice_sample_args):
             try:
                 return logprob(direction*z + init_x, *logprob_args)
             except:
-                print 'ERROR: Logprob failed at input %s' % str(direction*z + init_x)
+                print('ERROR: Logprob failed at input %s' % str(direction*z + init_x))
                 raise
                 
     
@@ -407,7 +407,7 @@ def slice_sample_simple(init_x, logprob, *logprob_args, **slice_sample_args):
             new_z     = (upper - lower)*npr.rand() + lower  # uniformly sample between upper and lower
             new_llh   = dir_logprob(new_z)  # new current logprob
             if np.isnan(new_llh):
-                print new_z, direction*new_z + init_x, new_llh, llh_s, init_x, logprob(init_x)
+                print(new_z, direction*new_z + init_x, new_llh, llh_s, init_x, logprob(init_x))
                 raise Exception("Slice sampler got a NaN logprob")
             if new_llh > llh_s:  # this is the termination condition
                 break       # it says, if you got to a better place than you started, you're done
@@ -422,7 +422,7 @@ def slice_sample_simple(init_x, logprob, *logprob_args, **slice_sample_args):
                 raise Exception("Slice sampler shrank to zero!")
 
         if verbose:
-            print "Steps Out:", l_steps_out, u_steps_out, " Steps In:", steps_in, "Final logprob:", new_llh
+            print("Steps Out:", l_steps_out, u_steps_out, " Steps In:", steps_in, "Final logprob:", new_llh)
 
         # return new the point
         return new_z*direction + init_x, new_llh
@@ -443,7 +443,7 @@ def slice_sample_simple(init_x, logprob, *logprob_args, **slice_sample_args):
 
     dims = init_x.shape[0]
     if compwise:   # if component-wise (independent) sampling
-        ordering = range(dims)
+        ordering = list(range(dims))
         npr.shuffle(ordering)
         cur_x = init_x.copy()
         for d in ordering:
@@ -472,7 +472,7 @@ if __name__ == '__main__':
 
     iters = 1000
     samps = np.zeros((iters,D))
-    for ii in xrange(1,iters):
+    for ii in range(1,iters):
         samps[ii,:] = slice_sample(samps[ii-1,:], fn, sigma=0.1, step_out=False, doubling_step=True, verbose=False)
 
     ll = -0.5*np.sum(samps**2, axis=1)

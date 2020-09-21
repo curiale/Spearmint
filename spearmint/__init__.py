@@ -110,7 +110,7 @@ class Experiment:
                  #db_uri='mongodb://spmint.chestimagingplatform.org/spearmint',
                  db_uri='',
                  likelihood='GAUSSIAN'): # other option is NOISELESS
-        for pval in parameters.itervalues():
+        for pval in parameters.values():
             pval['size'] = 1 # add default size = 1
             if pval['type'] == 'integer':
                 pval['type'] = 'int' # spearmint int type
@@ -158,7 +158,7 @@ class Experiment:
         return params_simple
 
     def load_task_group(self, jobs):
-        task_names = self.tasks.keys()
+        task_names = list(self.tasks.keys())
         task_group = TaskGroup(self.tasks, self.parameters)
 
         if jobs:

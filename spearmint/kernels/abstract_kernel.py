@@ -186,9 +186,7 @@ import numpy as np
 
 from abc import ABCMeta, abstractmethod
 
-class AbstractKernel(object):
-    __metaclass__ = ABCMeta
-
+class AbstractKernel(object, metaclass=ABCMeta):
     @property
     def hypers(self):
         return None

@@ -227,7 +227,7 @@ class WhitenedPriorSliceSampler(AbstractSampler):
         return lp
 
     def sample(self, model):
-        for i in xrange(self.thinning + 1):
+        for i in range(self.thinning + 1):
             params_array, new_latent_values, current_ll = self.sample_fun(model, **self.sampler_options)
             hyperparameter_utils.set_params_from_array(self.params, params_array)
             model.latent_values.set_value(new_latent_values)
@@ -266,15 +266,15 @@ if __name__ == '__main__':
 
     gsn = priors.Gaussian(mu = -1, sigma = 4)
 
-    for i in xrange(n):
+    for i in range(n):
         if i % 1000 == 0:
-            print 'Sample %d/%d' % (i,n)
+            print('Sample %d/%d' % (i,n))
 
         x, cur_ll = slice_sample(x, gsn. logprob)
         x_samples[i] = x.copy()
 
-    print '1D Gaussian actual mean: %f, mean of samples: %f' % (-1, np.mean(x_samples))
-    print '1D Gaussian actual sigma: %f, std of samples: %f' % (4, np.std(x_samples))
+    print('1D Gaussian actual mean: %f, mean of samples: %f' % (-1, np.mean(x_samples)))
+    print('1D Gaussian actual sigma: %f, std of samples: %f' % (4, np.std(x_samples)))
 
 
     plt.figure(1)
@@ -291,21 +291,21 @@ if __name__ == '__main__':
     x_samples = np.zeros((2,n))
     x = np.zeros(2)
 
-    for i in xrange(n):
+    for i in range(n):
         if i % 1000 == 0:
-            print 'Sample %d/%d' % (i,n)
+            print('Sample %d/%d' % (i,n))
 
         x, cur_ll = slice_sample(x, mvn.logprob)
         x_samples[:,i] = x.copy()
 
     mu_samp = np.mean(x_samples,axis=1)
-    print '2D Gaussian:'
-    print 'Actual mean:     [%f,%f]' % (mu[0], mu[1])
-    print 'Mean of samples: [%f,%f]' % (mu_samp[0], mu_samp[1])
-    print 'Actual Cov:'
-    print str(cov)
-    print 'Cov of samples'
-    print str(np.cov(x_samples))
+    print('2D Gaussian:')
+    print('Actual mean:     [%f,%f]' % (mu[0], mu[1]))
+    print('Mean of samples: [%f,%f]' % (mu_samp[0], mu_samp[1]))
+    print('Actual Cov:')
+    print(str(cov))
+    print('Cov of samples')
+    print(str(np.cov(x_samples)))
 
     # plt.figure(1)
     # plt.clf()

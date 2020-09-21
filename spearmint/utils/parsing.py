@@ -198,8 +198,7 @@ import json
 def unpack_args(str):
     if len(str) > 1:
         eq_re = re.compile("\s*=\s*")
-        return dict(map(lambda x: eq_re.split(x),
-                        re.compile("\s*,\s*").split(str)))
+        return dict([eq_re.split(x) for x in re.compile("\s*,\s*").split(str)])
     else:
         return {}
             

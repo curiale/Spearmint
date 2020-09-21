@@ -191,9 +191,7 @@ from operator import add # same as lambda x,y:x+y I think
 
 
 
-class AbstractPrior(object):
-    __metaclass__ = ABCMeta
-
+class AbstractPrior(object, metaclass=ABCMeta):
     @abstractmethod
     def logprob(self, x):
         pass

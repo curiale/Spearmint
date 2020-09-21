@@ -184,9 +184,9 @@
 
 import sys
 import spearmint
-from cluster_scheduler import AbstractClusterScheduler
+from .cluster_scheduler import AbstractClusterScheduler
 # Torque PBS scheduler python code from: https://oss.trac.surfsara.nl/pbs_python/
-import pbs
+from . import pbs
 from PBSQuery import PBSQuery
 
 def init(*args, **kwargs):

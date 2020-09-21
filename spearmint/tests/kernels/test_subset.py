@@ -205,8 +205,8 @@ def test_grad():
     dloss = kernel.cross_cov_grad_data(data1, data2).sum(0)
     
     dloss_est = np.zeros(dloss.shape)
-    for i in xrange(M):
-        for j in xrange(D):
+    for i in range(M):
+        for j in range(D):
             data2[i,j] += eps
             loss_1 = np.sum(kernel.cross_cov(data1, data2))
             data2[i,j] -= 2*eps
@@ -214,8 +214,8 @@ def test_grad():
             data2[i,j] += eps
             dloss_est[i,j] = ((loss_1 - loss_2) / (2*eps))
 
-    print 'Subset kernel grad using indices %s:' % inds
-    print dloss
+    print('Subset kernel grad using indices %s:' % inds)
+    print(dloss)
 
     assert np.linalg.norm(dloss - dloss_est) < 1e-6
 

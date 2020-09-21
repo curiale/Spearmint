@@ -183,7 +183,7 @@
 # its Institution.
 
 import spearmint
-from cluster_scheduler import AbstractClusterScheduler
+from .cluster_scheduler import AbstractClusterScheduler
 
 def init(*args, **kwargs):
     return SLURMScheduler(*args, **kwargs)

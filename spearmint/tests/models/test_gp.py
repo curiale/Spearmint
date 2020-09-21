@@ -206,7 +206,7 @@ def test_fit():
     gp.fit(inputs, vals, pending)
 
     assert gp.chain_length == 15
-    assert all([np.all(p.value != p.initial_value) for p in gp.params.values()])
+    assert all([np.all(p.value != p.initial_value) for p in list(gp.params.values())])
     assert len(gp._cache_list) == 10
     assert len(gp._hypers_list) == 10
     assert len(gp._fantasy_values_list) == 10
@@ -264,8 +264,8 @@ def test_predict():
     dloss = 2*(dmu*mu[:,np.newaxis,:]).sum(2) + 2*(v[:,np.newaxis,np.newaxis]*dv).sum(2)
 
     dloss_est = np.zeros(dloss.shape)
-    for i in xrange(Ntest):
-        for j in xrange(D):
+    for i in range(Ntest):
+        for j in range(D):
             pred[i,j] += eps
             mu, v = gp.predict(pred)
             loss_1 = np.sum(mu**2) + np.sum(v**2)

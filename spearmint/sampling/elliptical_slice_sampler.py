@@ -210,7 +210,7 @@ class EllipticalSliceSampler(AbstractSampler):
         # Here get the Cholesky from model
 
         params_array = hyperparameter_utils.params_to_array(self.params)
-        for i in xrange(self.thinning + 1):
+        for i in range(self.thinning + 1):
             params_array, current_ll = elliptical_slice(
                 params_array,
                 self.logprob,
@@ -292,7 +292,7 @@ if __name__ == '__main__':
     from utils import priors
     import time
 
-    print '2D Gaussian:'
+    print('2D Gaussian:')
 
     n = 1000000
 
@@ -312,20 +312,20 @@ if __name__ == '__main__':
     like_cov = np.dot(like_L, like_L.T)
     like = priors.MultivariateNormal(mu=like_mu, cov=like_cov)
 
-    print 'Prior cov:'
-    print prior_cov
-    print 'Like cov:'
-    print like_cov
+    print('Prior cov:')
+    print(prior_cov)
+    print('Like cov:')
+    print(like_cov)
 
     current_time = time.time()
     cur_ll = None
-    for i in xrange(n):
+    for i in range(n):
         if i % 1000 == 0:
-            print 'Elliptical Slice Sample %d/%d' % (i,n)
+            print('Elliptical Slice Sample %d/%d' % (i,n))
         x, cur_ll = elliptical_slice(x, like.logprob, prior_L, prior_mu, cur_log_like=cur_ll)
         x_samples[:,i] = x.copy()
 
-    print 'Elliptical slice sampling took %f seconds' % (time.time() - current_time)
+    print('Elliptical slice sampling took %f seconds' % (time.time() - current_time))
 
     # Formula for the actual mean and covariance matrix below came from
     # the wikipedia page on conjugate priors
@@ -334,13 +334,13 @@ if __name__ == '__main__':
     B = spla.cho_solve((like_L, True), like_mu)
     actual_mean = np.dot(actual_cov, A+B)
 
-    print 'Actual mean:           %s' % actual_mean
-    print 'Mean of ESS samples:   %s' % np.mean(x_samples,axis=1)
+    print('Actual mean:           %s' % actual_mean)
+    print('Mean of ESS samples:   %s' % np.mean(x_samples,axis=1))
 
-    print 'Actual Cov:'
-    print actual_cov
-    print 'Cov of ESS samples:'
-    print np.cov(x_samples)
+    print('Actual Cov:')
+    print(actual_cov)
+    print('Cov of ESS samples:')
+    print(np.cov(x_samples))
 
     # below: also compare with regular slice sampling (slower)
 

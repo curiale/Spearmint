@@ -189,6 +189,7 @@ import importlib
 from operator import add
 import numpy as np
 import sys
+from functools import reduce
 
 def parse_resources_from_config(config):
     """Parse the config dict and return a dictionary of resource objects keyed by resource name"""
@@ -202,7 +203,7 @@ def parse_resources_from_config(config):
     # If resources are specified
     else:
         resources = dict()
-        for resource_name, resource_opts in config["resources"].iteritems():
+        for resource_name, resource_opts in config["resources"].items():
             task_names = parse_tasks_in_resource_from_config(config, resource_name)
             resources[resource_name] = resource_factory(resource_name, task_names, resource_opts)
         return resources
@@ -217,7 +218,7 @@ def parse_tasks_in_resource_from_config(config, resource_name):
         return ['main']
     else:
         tasks = list()
-        for task_name, task_config in config["tasks"].iteritems():
+        for task_name, task_config in config["tasks"].items():
             # If the user specified tasks but not specific resources for those tasks,
             # We have to assume the tasks run on all resources...
             if "resources" not in task_config:
@@ -297,14 +298,14 @@ class Resource(object):
     def filterMyJobs(self, jobs):
         """Take a list of jobs and filter only those that are running/run on this resource"""
         if jobs:
-            return filter(lambda job: job['resource']==self.name, jobs)
+            return [job for job in jobs if job['resource']==self.name]
         else:
             return jobs
 
     def numPending(self, jobs):
         jobs = self.filterMyJobs(jobs)
         if jobs:
-            pending_jobs = map(lambda x: x['status'] in ['pending', 'new'], jobs)
+            pending_jobs = [x['status'] in ['pending', 'new'] for x in jobs]
             return reduce(add, pending_jobs, 0)
         else:
             return 0
@@ -312,7 +313,7 @@ class Resource(object):
     def numComplete(self, jobs):
         jobs = self.filterMyJobs(jobs)
         if jobs:
-            completed_jobs = map(lambda x: x['status'] == 'complete', jobs)
+            completed_jobs = [x['status'] == 'complete' for x in jobs]
             return reduce(add, completed_jobs, 0)
         else:
             return 0
